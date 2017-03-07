@@ -1,0 +1,100 @@
+<html>
+<head>
+<style>
+body{
+    background-image: url('http://l.maplevn.com/launcherms_bg');
+    background-repeat: no-repeat;
+    background-color: #FFFFFF;
+    background-position: -2px -2px;
+    font-family:tahoma;
+    font-size:12px;
+}
+a {
+    line-height: 1.5em;
+    text-decoration: none;
+}
+
+ul li {
+height:18px;
+overflow:hidden;
+}
+</style>
+
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script type="text/javascript">
+function jsonUptimeRobotApi(data) {
+    e = document.getElementById(data.monitors.monitor[0].friendlyname.toString());
+
+       // e.getElementsByTagName('span')[0].innerHTML = "Online";
+	///	return;
+    if(data.monitors.monitor[0].status==2) {
+        e.className = "online";
+        e.getElementsByTagName('span')[0].innerHTML = "Online";
+    } else if(data.monitors.monitor[0].status==9) {
+        e.className = "offline";
+        e.getElementsByTagName('span')[0].innerHTML = "Offline";
+    } else
+        e.getElementsByTagName('span')[0].innerHTML = "Đang kiểm tra";
+}
+
+function getDateTimeFromUtcTime(utcTime) {
+    var parts = utcTime.split('T');
+    var p = parts[0].split('-');
+    return p[2] + '/' + p[1];
+}
+
+function parseNewsFeed(data) {
+    var entries = data.feed.entry;
+    for (i=0; i<entries.length; ++i) {
+        var _li = $("<li>");
+        var _a = $("<a>");
+        var _span = $("<span>");
+        _span.addClass('date');
+        var entry = entries[i];
+        _span.text(getDateTimeFromUtcTime(entry.published['$t']));
+        var last_link = entry.link[entry.link.length - 1];
+        var link = last_link.href.replace('blog.maplevn.com', 'www.maplevn.com/news');
+        var title = entry.title['$t'];
+        _a
+            .attr('href', link).attr('target', '_blank').attr('title', title)
+            .append(_span).append("\n"+title).appendTo(_li);
+        _li.appendTo($("#news-list"));
+    }
+}
+function parseEventFeed(data) {
+    var entries = data.feed.entry;
+    for (i=0; i<entries.length; ++i) {
+        var _li = $("<li>");
+        var _a = $("<a>");
+        var _span = $("<span>");
+        _span.addClass('date');
+        var entry = entries[i];
+        _span.text(getDateTimeFromUtcTime(entry.published['$t']));
+        var last_link = entry.link[entry.link.length - 1];
+        var link = last_link.href.replace('blog.maplevn.com', 'www.maplevn.com/event');
+        var title = entry.title['$t'];
+        _a
+            .attr('href', link).attr('target', '_blank').attr('title', title)
+            .append(_span).append("\n"+title).appendTo(_li);
+        _li.appendTo($("#event-list"));
+    }
+
+}
+</script>
+</head>
+<body>
+<ul id="news-list" style="list-style:
+none; margin-left: 0; padding-left: 0.2em; text-indent: 0em;margin-top:20px;height:120px;width:260px;overflow:hidden;">
+</ul>
+<div style="text-align:center;margin-top:60px">
+PHIÊN BẢN HIỆN TẠI<br>
+<img src="http://u.maplevn.com/info.php?v=1" border="0" height="50px">
+</div>
+<ul id="event-list" style="list-style:
+none; margin-left: 0; padding-left: 0.2em; text-indent: 0em;margin-top:20px;height:120px;width:260px;overflow:hidden;top:275px;height:70px;width:270px;position:absolute;">
+    <li>Sự kiện</li>
+</ul>
+<script type="text/javascript" src="http://blog.maplevn.com/feeds/posts/summary/-/news?alt=json-in-script&callback=parseNewsFeed&max-results=6"></script>
+<script type="text/javascript" src="http://blog.maplevn.com/feeds/posts/summary/-/event?alt=json-in-script&callback=parseEventFeed&max-results=3"></script>
+</body>
+</html>
